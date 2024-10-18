@@ -1,0 +1,79 @@
+version: 2
+
+sources:
+  - name: medical_data
+    schema: public
+    description: "Data sourced from Ethiopian medical businesses, collected from Telegram channels."
+    tables:
+      - name: ethio_medical
+        description: "Raw data from Telegram containing information about channels and messages related to Ethiopian medical businesses."
+      - name: transformed_medical_product
+        description: "Dataset featuring processed medical product information derived from the raw data."
+
+models:
+  - name: processed_channel_info
+    description: "Dataset featuring processed information about channels."
+    columns:
+      - name: channel_handle
+        description: "Username of the Telegram channel."
+        tests:
+          - not_null
+          - unique
+      - name: channel_name
+        description: "The name of the Telegram channel."
+        tests:
+          - not_null
+
+  - name: processed_contact_numbers
+    description: "Dataset containing processed contact numbers."
+    columns:
+      - name: channel_identifier
+        description: "Identifier for the channel associated with the contact number."
+        tests:
+          - not_null
+          - unique
+      - name: phone_numbers
+        description: "Phone numbers linked to the channel."
+        tests:
+          - not_null
+
+  - name: processed_product_info
+    description: "Dataset featuring processed information about medical products."
+    columns:
+      - name: product_identifier
+        description: "Identifier for each medical product."
+        tests:
+          - not_null
+      - name: product_price
+        description: "Cost of the product in Birr."
+        tests:
+          - not_null
+          - accepted_range:
+              min: 0 # Ensures that the price is not negative
+      - name: channel_identifier
+        description: "Identifier for the channel that listed the product."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('processed_channel_info')
+              field: channel_identifier
+      - name: listing_date
+        description: "Date on which the product details were published."
+        tests:
+          - not_null
+
+  - name: processed_product_image_paths
+    description: "Dataset containing paths to product images."
+    columns:
+      - name: message_identifier
+        description: "Identifier for the message linked to the product image."
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('processed_product_info')
+              field: product_identifier
+      - name: image_file_path
+        description: "File path for the product image."
+        tests:
+          - not_null
