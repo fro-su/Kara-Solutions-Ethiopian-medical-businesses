@@ -7,11 +7,11 @@ sources:
     tables:
       - name: ethio_medical
         description: "Raw data from Telegram containing information about channels and messages related to Ethiopian medical businesses."
-      - name: transformed_medical_product
+      - name: medical_product
         description: "Dataset featuring processed medical product information derived from the raw data."
 
 models:
-  - name: processed_channel_info
+  - name: channel_info
     description: "Dataset featuring processed information about channels."
     columns:
       - name: channel_handle
@@ -24,7 +24,7 @@ models:
         tests:
           - not_null
 
-  - name: processed_contact_numbers
+  - name: contact_numbers
     description: "Dataset containing processed contact numbers."
     columns:
       - name: channel_identifier
@@ -37,7 +37,7 @@ models:
         tests:
           - not_null
 
-  - name: processed_product_info
+  - name: product_info
     description: "Dataset featuring processed information about medical products."
     columns:
       - name: product_identifier
